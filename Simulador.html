@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simulador - CLT 2026</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+    }
+    header {
+      background: #003366;
+      color: #fff;
+      padding: 16px 24px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+    .container {
+      padding: 16px 24px 40px 24px;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .tab {
+      padding: 8px 16px;
+      cursor: pointer;
+      border: none;
+      background: #e0e0e0;
+      border-radius: 4px 4px 0 0;
+      font-weight: bold;
+    }
+    .tab.active {
+      background: #ffffff;
+      border-bottom: 2px solid #ffffff;
+    }
+    .tab-content {
+      display: none;
+      background: #ffffff;
+      border-radius: 0 4px 4px 4px;
+      padding: 16px;
+      box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 8px 16px;
+      align-items: center;
+      max-width: 800px;
+    }
+    label {
+      font-size: 14px;
+    }
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 4px 6px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    input[readonly] {
+      background: #f0f8e8;
+      font-weight: bold;
+    }
+    .section-title {
+      margin: 16px 0 8px 0;
+      font-weight: bold;
+      font-size: 15px;
+      color: #333;
+    }
+    .btn-area {
+      margin-top: 16px;
+    }
+    button#btnCalcular {
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 4px;
+      border: none;
+      background: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+    button#btnCalcular:hover {
+      background: #0056b3;
+    }
+    .resumo-grid {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 8px 16px;
+      max-width: 900px;
+    }
+    .obs {
+      font-size: 12px;
+      color: #555;
+      margin-top: 8px;
+    }
+    .footer-note {
+      margin-top: 24px;
+      font-size: 11px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Simulador de Custo com Faltas e Atrasos - CLT 2026</h1>
+</header>
+
+<div class="container">
+
+  <div class="tabs">
+    <button class="tab active" data-tab="tab-colaborador">Colaborador</button>
+    <button class="tab" data-tab="tab-faltas">Faltas / Atrasos</button>
+    <button class="tab" data-tab="tab-inss">INSS 2026</button>
+    <button class="tab" data-tab="tab-resumo">Resumo de Custos</button>
+  </div>
+
+  <!-- Aba Colaborador -->
+  <div id="tab-colaborador" class="tab-content active">
+    <div class="section-title">Dados do Colaborador</div>
+    <div class="form-grid">
+      <label for="nome">Nome do Colaborador:</label>
+      <input type="text" id="nome" value="Colaborador Exemplo" />
+
+      <label for="cargo">Cargo:</label>
+      <input type="text" id="cargo" value="Cargo Exemplo" />
+
+      <label for="salarioBase">Salário Base (R$):</label>
+      <input type="number" id="salarioBase" value="3000" step="0.01" />
+
+      <label for="jornadaMensal">Jornada Mensal (horas):</label>
+      <input type="number" id="jornadaMensal" value="220" />
+
+      <div class="section-title" style="grid-column: 1 / 3;">Benefícios Mensais</div>
+
+      <label for="valeAlimentacao">Vale Alimentação (R$):</label>
+      <input type="number" id="valeAlimentacao" value="400" step="0.01" />
+
+      <label for="valeRefeicao">Vale Refeição (R$):</label>
+      <input type="number" id="valeRefeicao" value="600" step="0.01" />
+
+      <label for="valeTransporte">Vale Transporte (R$):</label>
+      <input type="number" id="valeTransporte" value="200" step="0.01" />
+
+      <label for="assistMedica">Assistência Médica (R$):</label>
+      <input type="number" id="assistMedica" value="150" step="0.01" />
+
+      <label for="assistOdonto">Assistência Odontológica (R$):</label>
+      <input type="number" id="assistOdonto" value="30" step="0.01" />
+
+      <label for="seguroVida">Seguro de Vida (R$):</label>
+      <input type="number" id="seguroVida" value="20" step="0.01" />
+
+      <label for="totalBeneficios">Total Benefícios:</label>
+      <input type="text" id="totalBeneficios" readonly />
+
+      <div class="section-title" style="grid-column: 1 / 3;">Valores Calculados Automaticamente</div>
+
+      <label for="valorHora">Valor Hora:</label>
+      <input type="text" id="valorHora" readonly />
+
+      <label for="valorMinuto">Valor Minuto:</label>
+      <input type="text" id="valorMinuto" readonly />
+
+      <label for="valorDia">Valor Dia (1/30):</label>
+      <input type="text" id="valorDia" readonly />
+
+      <label for="custoBrutoTotal">Custo Bruto Total (sem descontos):</label>
+      <input type="text" id="custoBrutoTotal" readonly />
+    </div>
+  </div>
+
+  <!-- Aba Faltas / Atrasos -->
+  <div id="tab-faltas" class="tab-content">
+    <div class="section-title">Ocorrências do Mês - Faltas e Atrasos</div>
+    <div class="form-grid">
+      <label for="qtdFaltas">Quantidade de faltas injustificadas:</label>
+      <input type="number" id="qtdFaltas" value="1" />
+
+      <label for="minAtrasoBruto">Total de minutos de atraso (bruto):</label>
+      <input type="number" id="minAtrasoBruto" value="45" />
+
+      <label for="diasAtraso">Dias com atraso:</label>
+      <input type="number" id="diasAtraso" value="3" />
+
+      <label for="totalDSRMes">Total de DSR no mês:</label>
+      <input type="number" id="totalDSRMes" value="4" />
+
+      <label for="descFaltas">Desconto por Faltas (R$):</label>
+      <input type="text" id="descFaltas" readonly />
+
+      <label for="descDSR">Desconto por DSR (R$):</label>
+      <input type="text" id="descDSR" readonly />
+
+      <label for="descAtrasos">Desconto por Atrasos (R$):</label>
+      <input type="text" id="descAtrasos" readonly />
+
+      <label for="totalDescOcorrencias">TOTAL Descontos Ocorrências (R$):</label>
+      <input type="text" id="totalDescOcorrencias" readonly />
+    </div>
+    <div class="obs">
+      Tolerância de 10 min/dia (Art. 58 CLT + Súmula 366 TST). Falta injustificada gera perda de 1 dia + 1 DSR proporcional.
+    </div>
+  </div>
+
+  <!-- Aba INSS -->
+  <div id="tab-inss" class="tab-content">
+    <div class="section-title">Tabela INSS 2026 - Alíquotas Progressivas</div>
+    <ul>
+      <li>Até R$ 1.621,00: 7,5%</li>
+      <li>R$ 1.621,01 a R$ 2.902,84: 9%</li>
+      <li>R$ 2.902,85 a R$ 4.354,27: 12%</li>
+      <li>R$ 4.354,28 a R$ 8.475,55: 14%</li>
+    </ul>
+    <div class="section-title">Cálculo do INSS sobre Salário Ajustado</div>
+    <div class="form-grid">
+      <label for="salarioAjustadoINSS">Salário Bruto Ajustado (base INSS):</label>
+      <input type="text" id="salarioAjustadoINSS" readonly />
+
+      <label for="inssTotal">INSS Total a Descontar (R$):</label>
+      <input type="text" id="inssTotal" readonly />
+    </div>
+    <div class="obs">
+      Cálculo progressivo por faixas, sobre o salário após descontos de faltas/atrasos.
+    </div>
+  </div>
+
+  <!-- Aba Resumo -->
+  <div id="tab-resumo" class="tab-content">
+    <div class="section-title">Resumo de Custos do Colaborador - Mensal</div>
+    <div class="resumo-grid">
+      <label>Nome:</label>
+      <span id="resNome"></span>
+
+      <label>Cargo:</label>
+      <span id="resCargo"></span>
+
+      <div class="section-title" style="grid-column: 1 / 3;">Composição Salarial</div>
+
+      <label>Salário Base (R$):</label>
+      <span id="resSalarioBase"></span>
+
+      <label>Desconto Faltas (R$):</label>
+      <span id="resDescFaltas"></span>
+
+      <label>Desconto DSR (R$):</label>
+      <span id="resDescDSR"></span>
+
+      <label>Desconto Atrasos (R$):</label>
+      <span id="resDescAtrasos"></span>
+
+      <label>Salário Bruto Ajustado (R$):</label>
+      <span id="resSalarioBrutoAjustado"></span>
+
+      <div class="section-title" style="grid-column: 1 / 3;">Descontos Legais</div>
+
+      <label>INSS (progressivo 2026) (R$):</label>
+      <span id="resINSS"></span>
+
+      <label>IRRF (se aplicável) (R$):</label>
+      <span id="resIRRF"></span>
+
+      <label>Vale Transporte (6%) (R$):</label>
+      <span id="resVT"></span>
+
+      <label>Salário Líquido (R$):</label>
+      <span id="resSalarioLiquido"></span>
+
+      <div class="section-title" style="grid-column: 1 / 3;">Benefícios Pagos pela Empresa</div>
+
+      <label>Total Benefícios (R$):</label>
+      <span id="resTotalBeneficios"></span>
+
+      <div class="section-title" style="grid-column: 1 / 3;">Encargos Patronais</div>
+
+      <label>Total Encargos Patronais (R$):</label>
+      <span id="resTotalEncargos"></span>
+
+      <div class="section-title" style="grid-column: 1 / 3;">Provisões Mensais</div>
+
+      <label>Total Provisões (R$):</label>
+      <span id="resTotalProvisoes"></span>
+
+      <div class="section-title" style="grid-column: 1 / 3;">Custo Total Mensal / Anual</div>
+
+      <label>Custo Total Empresa (mês) (R$):</label>
+      <span id="resCustoMensal"></span>
+
+      <label>Custo Total Empresa (ano) (R$):</label>
+      <span id="resCustoAnual"></span>
+
+      <label>Diferença (Custo - Líquido) (R$):</label>
+      <span id="resDiferenca"></span>
+
+      <label>Percentual Custo Total sobre Salário Base:</label>
+      <span id="resPercentual"></span>
+    </div>
+
+    <div class="footer-note">
+      Exemplo baseado em regras CLT 2026 com INSS progressivo e encargos patronais médios.
+    </div>
+  </div>
+
+  <div class="btn-area">
+    <button id="btnCalcular">Calcular</button>
+  </div>
+
+</div>
+
+<script>
+  // Tabs
+  const tabs = document.querySelectorAll(".tab");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      const target = tab.getAttribute("data-tab");
+      tabs.forEach(t => t.classList.remove("active"));
+      tabContents.forEach(c => c.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById(target).classList.add("active");
+    });
+  });
+
+  function parseNumber(id) {
+    const el = document.getElementById(id);
+    if (!el) return 0;
+    const v = el.value.replace(",", ".");
+    const n = parseFloat(v);
+    return isNaN(n) ? 0 : n;
+  }
+
+  function formatMoney(v) {
+    return "R$ " + v.toFixed(2);
+  }
+
+  function calcularINSSProgressivo(baseINSS) {
+    const faixa1Limite = 1621.00;
+    const faixa2Limite = 2902.84;
+    const faixa3Limite = 4354.27;
+    const faixa4Limite = 8475.55;
+
+    let total = 0.0;
+
+    const faixa1Base = Math.min(baseINSS, faixa1Limite);
+    if (faixa1Base > 0) total += faixa1Base * 0.075;
+
+    if (baseINSS > faixa1Limite) {
+      const faixa2Base = Math.min(baseINSS, faixa2Limite) - faixa1Limite;
+      if (faixa2Base > 0) total += faixa2Base * 0.09;
+    }
+
+    if (baseINSS > faixa2Limite) {
+      const faixa3Base = Math.min(baseINSS, faixa3Limite) - faixa2Limite;
+      if (faixa3Base > 0) total += faixa3Base * 0.12;
+    }
+
+    if (baseINSS > faixa3Limite) {
+      const faixa4Base = Math.min(baseINSS, faixa4Limite) - faixa3Limite;
+      if (faixa4Base > 0) total += faixa4Base * 0.14;
+    }
+
+    return total;
+  }
+
+  document.getElementById("btnCalcular").addEventListener("click", () => {
+    // Dados Colaborador
+    const nome = document.getElementById("nome").value;
+    const cargo = document.getElementById("cargo").value;
+    const salarioBase = parseNumber("salarioBase");
+    const jornadaMensal = parseNumber("jornadaMensal");
+
+    const valeAlimentacao = parseNumber("valeAlimentacao");
+    const valeRefeicao = parseNumber("valeRefeicao");
+    const valeTransporte = parseNumber("valeTransporte");
+    const assistMedica = parseNumber("assistMedica");
+    const assistOdonto = parseNumber("assistOdonto");
+    const seguroVida = parseNumber("seguroVida");
+
+    const totalBeneficios = valeAlimentacao + valeRefeicao + valeTransporte +
+                            assistMedica + assistOdonto + seguroVida;
+
+    const valorHora = jornadaMensal > 0 ? (salarioBase / jornadaMensal) : 0;
+    const valorMinuto = valorHora / 60.0;
+    const valorDia = salarioBase / 30.0;
+    const custoBrutoTotal = salarioBase + totalBeneficios;
+
+    document.getElementById("totalBeneficios").value = formatMoney(totalBeneficios);
+    document.getElementById("valorHora").value = formatMoney(valorHora);
+    document.getElementById("valorMinuto").value = "R$ " + valorMinuto.toFixed(4);
+    document.getElementById("valorDia").value = formatMoney(valorDia);
+    document.getElementById("custoBrutoTotal").value = formatMoney(custoBrutoTotal);
+
+    // Faltas / Atrasos
+    const qtdFaltas = parseInt(document.getElementById("qtdFaltas").value || "0", 10);
+    const minAtrasoBruto = parseInt(document.getElementById("minAtrasoBruto").value || "0", 10);
+    const diasAtraso = parseInt(document.getElementById("diasAtraso").value || "0", 10);
+    const totalDSRMes = parseInt(document.getElementById("totalDSRMes").value || "0", 10);
+
+    const descFaltas = qtdFaltas * valorDia;
+    const dsrPerdidos = Math.min(qtdFaltas, totalDSRMes);
+    const descDSR = dsrPerdidos * valorDia;
+
+    const toleranciaTotal = 10 * diasAtraso;
+    const minutosDescontar = Math.max(0, minAtrasoBruto - toleranciaTotal);
+    const descAtrasos = minutosDescontar * valorMinuto;
+
+    const totalDescOcorrencias = descFaltas + descDSR + descAtrasos;
+
+    document.getElementById("descFaltas").value = formatMoney(descFaltas);
+    document.getElementById("descDSR").value = formatMoney(descDSR);
+    document.getElementById("descAtrasos").value = formatMoney(descAtrasos);
+    document.getElementById("totalDescOcorrencias").value = formatMoney(totalDescOcorrencias);
+
+    // Salário ajustado
+    const salarioBrutoAjustado = salarioBase - totalDescOcorrencias;
+    document.getElementById("salarioAjustadoINSS").value = formatMoney(salarioBrutoAjustado);
+
+    // INSS
+    const inss = calcularINSSProgressivo(salarioBrutoAjustado);
+    document.getElementById("inssTotal").value = formatMoney(inss);
+
+    const irrf = 0.0;
+    const descontoVT = salarioBrutoAjustado * 0.06;
+    const salarioLiquido = salarioBrutoAjustado - inss - irrf - descontoVT;
+
+    // Encargos patronais
+    const inssPatronal = salarioBrutoAjustado * 0.20;
+    const fgts = salarioBrutoAjustado * 0.08;
+    const sat = salarioBrutoAjustado * 0.02;
+    const sistemaS = salarioBrutoAjustado * 0.03;
+    const salarioEducacao = salarioBrutoAjustado * 0.025;
+    const incra = salarioBrutoAjustado * 0.002;
+    const sebrae = salarioBrutoAjustado * 0.006;
+    const totalEncargos = inssPatronal + fgts + sat + sistemaS +
+                          salarioEducacao + incra + sebrae;
+
+    // Provisões
+    const decimoTerceiro = salarioBrutoAjustado / 12.0;
+    const feriasMaisTerco = (salarioBrutoAjustado * 1.3333) / 12.0;
+    const fgtsSobreProvisoes = (decimoTerceiro + feriasMaisTerco) * 0.08;
+    const totalProvisoes = decimoTerceiro + feriasMaisTerco + fgtsSobreProvisoes;
+
+    // Custos
+    const custoTotalMensal = salarioBrutoAjustado + totalEncargos + totalProvisoes + totalBeneficios;
+    const custoTotalAnual = custoTotalMensal * 12.0;
+    const diferenca = custoTotalMensal - salarioLiquido;
+    const percentual = salarioBase > 0 ? ((custoTotalMensal / salarioBase) - 1.0) * 100.0 : 0;
+
+    // Preenche Resumo
+    document.getElementById("resNome").textContent = nome;
+    document.getElementById("resCargo").textContent = cargo;
+    document.getElementById("resSalarioBase").textContent = formatMoney(salarioBase);
+    document.getElementById("resDescFaltas").textContent = formatMoney(descFaltas);
+    document.getElementById("resDescDSR").textContent = formatMoney(descDSR);
+    document.getElementById("resDescAtrasos").textContent = formatMoney(descAtrasos);
+    document.getElementById("resSalarioBrutoAjustado").textContent = formatMoney(salarioBrutoAjustado);
+    document.getElementById("resINSS").textContent = formatMoney(inss);
+    document.getElementById("resIRRF").textContent = formatMoney(irrf);
+    document.getElementById("resVT").textContent = formatMoney(descontoVT);
+    document.getElementById("resSalarioLiquido").textContent = formatMoney(salarioLiquido);
+    document.getElementById("resTotalBeneficios").textContent = formatMoney(totalBeneficios);
+    document.getElementById("resTotalEncargos").textContent = formatMoney(totalEncargos);
+    document.getElementById("resTotalProvisoes").textContent = formatMoney(totalProvisoes);
+    document.getElementById("resCustoMensal").textContent = formatMoney(custoTotalMensal);
+    document.getElementById("resCustoAnual").textContent = formatMoney(custoTotalAnual);
+    document.getElementById("resDiferenca").textContent = formatMoney(diferenca);
+    document.getElementById("resPercentual").textContent = percentual.toFixed(2) + "%";
+  });
+
+  // cálculo inicial com valores de exemplo
+  window.addEventListener("load", () => {
+    document.getElementById("btnCalcular").click();
+  });
+</script>
+</body>
+</html>
